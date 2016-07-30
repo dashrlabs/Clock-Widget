@@ -12,13 +12,15 @@ export default class clockWidget extends React.Component {
   static widgetName = 'Clock';
   static sizes = [[2, 1]];
 
-  componentWillMount() {
-    this.updateDate();
+  constructor(...args) {
+    super(...args);
 
-    setInterval(this.updateDate.bind(this), 5000);
+    this.state = this.generateDate();
+
+    setInterval(() => this.setState(this.generateDate), 5000);
   }
 
-  updateDate() {
+  generateDate() {
     const days = [
       'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
     ];
@@ -28,12 +30,11 @@ export default class clockWidget extends React.Component {
       'July', 'August', 'September', 'October', 'November', 'December',
     ];
 
-    this.props.settings.set('time',
-      `${this.pad(new Date().getHours().toString())}:${this.pad(new Date().getMinutes().toString())}`
-    );
-    // this.props.settings.set('day', days[new Date().getDay()]);
-    this.props.settings.set('day', days[3]);
-    this.props.settings.set('date', `${months[new Date().getMonth()]} ${new Date().getDate()}`);
+    return {
+      time: `${this.pad(new Date().getHours().toString())}:${this.pad(new Date().getMinutes().toString())}`,
+      day: days[new Date().getDay()],
+      date: `${months[new Date().getMonth()]} ${new Date().getDate()}`,
+    };
   }
 
   pad(str) {
@@ -46,14 +47,14 @@ export default class clockWidget extends React.Component {
         <h1
           className="uk-flex-item-1 uk-flex uk-flex-middle uk-flex-right uk-margin-bottom-remove uk-margin-small-right time"
         >
-          {this.props.settings.get('time')}
+          {this.state.time}
         </h1>
         <div className="uk-flex-item-1 uk-flex uk-flex-column uk-margin-small-left">
           <div className="uk-flex-item-1 uk-flex uk-flex-bottom">
-            <h2 className="uk-margin-bottom-remove day">{this.props.settings.get('day')}</h2>
+            <h2 className="uk-margin-bottom-remove day">{this.state.day}</h2>
           </div>
           <div className="uk-flex-item-1">
-            <h2 className="uk-margin-bottom-remove date">{this.props.settings.get('date')}</h2>
+            <h2 className="uk-margin-bottom-remove date">{this.state.date}</h2>
           </div>
         </div>
       </div>
